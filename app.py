@@ -32,7 +32,7 @@ def add_author():
                 new_author = Author(name=name, birthdate=birthdate, date_of_death =  date_of_death)
                 db.session.add(new_author)
                 db.session.commit()
-                return redirect(url_for('add_author'))
+                return redirect(url_for('books'))
             except ValueError:
                 print("birth_date must be a valid date")
     return render_template('add_author.html')
@@ -57,7 +57,7 @@ def add_book():
                     new_book = Book(title=title, isbn=isbn, publication_year=publication_year, author_id=author_id)
                     db.session.add(new_book)
                     db.session.commit()
-                    return redirect(url_for('add_book'))
+                    return redirect(url_for('books'))
             except ValueError:
                 print("something mandatory is missing")
     return render_template('add_book.html')
@@ -98,8 +98,8 @@ def search_books():
     return render_template('home.html', books=books, search=True)
 
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
-"""this function deletes a book from the db"""
 def delete_book(book_id):
+    """this function deletes a book from the db"""
     book = Book.query.get_or_404(book_id)
     author_id = book.author_id  # save the authors id before the book is deleted
     db.session.delete(book)
@@ -111,9 +111,7 @@ def delete_book(book_id):
         if author:
             db.session.delete(author)
             db.session.commit()
-
-    flash(f"Book '{book.title}' was successfully deleted.", "success")
-    return redirect(url_for('home'))
+    return redirect(url_for('books'))
 
 """
 with app.app_context():

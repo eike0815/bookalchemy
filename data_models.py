@@ -5,6 +5,7 @@ db = SQLAlchemy()
 
 
 class Author(db.Model):
+    """here the author object is created"""
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     birthdate = db.Column(db.Date, nullable=False)
@@ -16,6 +17,7 @@ class Author(db.Model):
 
 
 class Book(db.Model):
+    """here the book object is created"""
     id = db.Column(db.Integer,primary_key=True, autoincrement=True)
     isbn = db.Column(db.String, nullable= False, unique=True)
     title = db.Column(db.String, nullable=False)
