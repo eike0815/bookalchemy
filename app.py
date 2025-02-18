@@ -18,6 +18,7 @@ def books():
 
 @app.route('/add_author', methods = ['GET','POST'])
 def add_author():
+    """this function adds a new author to the db"""
     if request.method== 'POST':
         name  =request.form.get('name')
         birthdate_str = request.form.get('birthdate')
@@ -39,6 +40,7 @@ def add_author():
 
 @app.route('/add_book', methods = ['GET','POST'])
 def add_book():
+    """this function adds a book to the db"""
     if request.method== 'POST':
         title  =request.form.get('title')
         isbn = request.form.get('isbn')
@@ -63,7 +65,7 @@ def add_book():
 
 @app.route('/books/sorted')
 def get_sorted_books():
-    """sorts the books by title or author"""
+    """sorts the books in the db by title or author"""
     sort_by = request.args.get('sort', 'author').strip().lower()
     print(sort_by, "here")
     direction = request.args.get('direction', 'asc').strip().lower()
@@ -82,14 +84,13 @@ def get_sorted_books():
         for book in sorted_books]
     return jsonify(resulttest)
 
+
 @app.route('/search')
 def search_books():
+    """this function searches the db for a book"""
     query = request.args.get('query', '').strip()
-
     if not query:
         return render_template('home.html', books=[], search=True)
-
-    # SQLAlchemy LIKE Query (case-insensitive)
     books = Book.query.join(Author).filter(
         Book.title.ilike(f"%{query}%")
     ).all()
@@ -97,14 +98,13 @@ def search_books():
     return render_template('home.html', books=books, search=True)
 
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
+"""this function deletes a book from the db"""
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
-
-    author_id = book.author_id  # Speichere die Author ID, bevor das Buch gelöscht wird
+    author_id = book.author_id  # save the authors id before the book is deleted
     db.session.delete(book)
     db.session.commit()
-
-    # Prüfen, ob der Autor noch andere Bücher hat
+    # checking out if the author has also written different books in the db
     remaining_books = Book.query.filter_by(author_id=author_id).first()
     if not remaining_books:
         author = Author.query.get(author_id)
